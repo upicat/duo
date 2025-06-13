@@ -1,0 +1,28 @@
+.container {
+  padding: 24px;
+}
+
+.card {
+  width: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.featureList {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.featureList li {
+  margin-bottom: 12px;
+  padding-left: 8px;
+}
+
+.featureList strong {
+  margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+}

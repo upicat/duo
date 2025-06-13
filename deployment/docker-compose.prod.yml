@@ -1,0 +1,128 @@
+version: '3.8'
+
+services:
+  # 后端服务（生产环境）
+  backend:
+    build: 
+      context: ../backend
+      dockerfile: Dockerfile
+      args:
+        - SPRING_PROFILES_ACTIVE=prod
+    container_name: duo-backend-prod
+    restart: always
+    expose:
+      - "8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=duo_db
+      - DB_USERNAME=${DB_USERNAME:-duo}
+      - DB_PASSWORD=${DB_PASSWORD:-duo123}
+      - REDIS_HOST=redis
+      - JWT_SECRET=${JWT_SECRET:-mySecretKey1234567890abcdefghijklmnopqrstuvwxyz}
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - duo-network-prod
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # 前端服务（生产环境）
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    container_name: duo-frontend-prod
+    restart: always
+    expose:
+      - "80"
+    depends_on:
+      - backend
+    networks:
+      - duo-network-prod
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Nginx反向代理
+  nginx:
+    image: nginx:1.21-alpine
+    container_name: duo-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - duo-network-prod
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # MySQL数据库（生产环境）
+  mysql:
+    image: mysql:8.0
+    container_name: duo-mysql-prod
+    restart: always
+    expose:
+      - "3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-password}
+      - MYSQL_DATABASE=duo_db
+      - MYSQL_USER=${DB_USERNAME:-duo}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-duo123}
+    volumes:
+      - mysql-data-prod:/var/lib/mysql
+      - ../database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - duo-network-prod
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Redis缓存（生产环境）
+  redis:
+    image: redis:6.2-alpine
+    container_name: duo-redis-prod
+    restart: always
+    expose:
+      - "6379"
+    volumes:
+      - redis-data-prod:/data
+    networks:
+      - duo-network-prod
+    command: redis-server --appendonly yes
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  duo-network-prod:
+    driver: bridge
+
+volumes:
+  mysql-data-prod:
+  redis-data-prod:

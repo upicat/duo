@@ -1,0 +1,22 @@
+.error-boundary {
+  padding: 20px;
+  background-color: #ffebee;
+  border: 1px solid #ef9a9a;
+  border-radius: 4px;
+  color: #b71c1c;
+  font-family: var(--font-family);
+  font-size: var(--base-font-size);
+  line-height: var(--base-line-height);
+}
+
+.error-boundary h2 {
+  margin-top: 0;
+  color: #c62828;
+}
+
+.error-boundary pre {
+  background-color: #fff5f5;
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+}

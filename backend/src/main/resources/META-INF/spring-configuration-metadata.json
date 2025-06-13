@@ -1,0 +1,32 @@
+{
+  "groups": [
+    {
+      "name": "jwt",
+      "type": "com.example.config.JwtProperties",
+      "sourceType": "com.example.config.JwtProperties",
+      "description": "JWT相关配置属性"
+    }
+  ],
+  "properties": [
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "sourceType": "com.example.config.JwtProperties",
+      "description": "JWT签名密钥"
+    },
+    {
+      "name": "jwt.expiration",
+      "type": "java.lang.Integer",
+      "sourceType": "com.example.config.JwtProperties",
+      "description": "JWT过期时间（秒）",
+      "defaultValue": 86400
+    },
+    {
+      "name": "jwt.header",
+      "type": "java.lang.String",
+      "sourceType": "com.example.config.JwtProperties",
+      "description": "JWT请求头名称",
+      "defaultValue": "Authorization"
+    }
+  ]
+}

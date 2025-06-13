@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # 后端服务
+  backend:
+    build: ../backend
+    container_name: duo-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - duo-network
+
+  # 前端服务
+  frontend:
+    build: ../frontend
+    container_name: duo-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - duo-network
+
+  # MySQL数据库
+  mysql:
+    image: mysql:8.0
+    container_name: duo-mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=duo_db
+      - MYSQL_USER=duo
+      - MYSQL_PASSWORD=duo123
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ../database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - duo-network
+
+  # Redis缓存
+  redis:
+    image: redis:6.2-alpine
+    container_name: duo-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - duo-network
+
+networks:
+  duo-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  redis-data:

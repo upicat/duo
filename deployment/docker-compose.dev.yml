@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # 后端服务（开发环境）
+  backend:
+    build: 
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: duo-backend-dev
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=duo_db
+      - DB_USERNAME=duo
+      - DB_PASSWORD=duo123
+      - REDIS_HOST=redis
+    volumes:
+      - ../backend:/app
+      - ~/.m2:/root/.m2
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - duo-network-dev
+    command: ["./mvnw", "spring-boot:run", "-Dspring-boot.run.profiles=dev"]
+
+  # 前端服务（开发环境）
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.dev
+    container_name: duo-frontend-dev
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_API_URL=http://localhost:8080/api
+    depends_on:
+      - backend
+    networks:
+      - duo-network-dev
+    command: ["npm", "run", "dev"]
+
+  # MySQL数据库（开发环境）
+  mysql:
+    image: mysql:8.0
+    container_name: duo-mysql-dev
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=duo_db
+      - MYSQL_USER=duo
+      - MYSQL_PASSWORD=duo123
+    volumes:
+      - mysql-data-dev:/var/lib/mysql
+      - ../database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - duo-network-dev
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  # Redis缓存（开发环境）
+  redis:
+    image: redis:6.2-alpine
+    container_name: duo-redis-dev
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data-dev:/data
+    networks:
+      - duo-network-dev
+
+networks:
+  duo-network-dev:
+    driver: bridge
+
+volumes:
+  mysql-data-dev:
+  redis-data-dev:
