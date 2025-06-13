@@ -1,7 +1,6 @@
 package com.example.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -94,13 +93,14 @@ class UserServiceImplTest {
     }
 
     @Test
+    @SuppressWarnings("null")
     void getUserById_WithNullId() {
         // When & Then
         assertThrows(Exception.class, () -> {
-            userService.getUserById(null);
+            userService.getUserById((Long) null);
         });
 
-        verify(userRepository).findById(null);
+        verify(userRepository).findById((Long) null);
     }
 
     @Test
@@ -270,12 +270,12 @@ class UserServiceImplTest {
         // Then
         assertNotNull(result);
         assertEquals(testUsers.size(), result.size());
-        
+
         // 验证每个用户都被正确转换
         for (int i = 0; i < testUsers.size(); i++) {
             User originalUser = testUsers.get(i);
             UserResponse responseUser = result.get(i);
-            
+
             assertEquals(originalUser.getId(), responseUser.getId());
             assertEquals(originalUser.getUsername(), responseUser.getUsername());
             assertEquals(originalUser.getNickname(), responseUser.getNickname());
