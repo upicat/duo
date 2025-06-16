@@ -17,10 +17,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
-import com.example.dto.response.LoginResponse;
-import com.example.entity.User;
-import com.example.repository.UserRepository;
-import com.example.security.JwtTokenProvider;
+import com.example.api.dto.response.LoginResponse;
+import com.example.core.entity.User;
+import com.example.core.repository.UserRepository;
+import com.example.core.service.impl.AuthServiceImpl;
+import com.example.infra.security.JwtTokenProvider;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceImplTest {

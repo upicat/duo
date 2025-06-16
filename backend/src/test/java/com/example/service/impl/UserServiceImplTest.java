@@ -14,10 +14,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.dto.response.UserResponse;
-import com.example.entity.User;
-import com.example.exception.ResourceNotFoundException;
-import com.example.repository.UserRepository;
+import com.example.api.dto.response.UserResponse;
+import com.example.core.entity.User;
+import com.example.core.repository.UserRepository;
+import com.example.core.service.impl.UserServiceImpl;
+import com.example.infra.exception.ResourceNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
