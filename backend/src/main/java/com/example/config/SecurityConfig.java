@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .authenticationManager(authenticationManager())
                 .authorizeHttpRequests(authz -> authz
                         // 认证接口
-                        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                        .requestMatchers("/auth/login", "/auth/register").permitAll()
 
                         // 静态资源
                         .requestMatchers("/", "/login", "/static/**", "/assets/**", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.jpg", "/*.jpeg", "/*.gif", "/*.svg").permitAll()
