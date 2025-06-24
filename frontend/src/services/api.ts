@@ -20,7 +20,8 @@ class ApiClient {
     // Request interceptor
     this.instance.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('token')
+        // 使用auth_token键名，与useAuth.ts保持一致
+        const token = localStorage.getItem('auth_token')
         if (token && config.headers) {
           config.headers['Authorization'] = `Bearer ${token}`
         }
@@ -38,9 +39,10 @@ class ApiClient {
       },
       (error) => {
         if (error.response?.status === 401) {
-          // Token expired or invalid
-          localStorage.removeItem('token')
-          window.location.href = '/login'
+          // Token expired or invalid - just clear the token
+          // Let the auth provider handle the redirect
+          localStorage.removeItem('auth_token')
+          console.log('Token expired or invalid, cleared token')
         }
         return Promise.reject(error)
       }

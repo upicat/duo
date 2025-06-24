@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
-        
+
         return convertToUserResponse(user);
     }
 
@@ -37,9 +37,10 @@ public class UserServiceImpl implements UserService {
     public long getUserCount(String keyword) {
         return userRepository.count();
     }
-    
+
     /**
      * 将用户实体转换为用户响应对象
+     * 
      * @param user 用户实体
      * @return 用户响应对象
      */
@@ -50,7 +51,6 @@ public class UserServiceImpl implements UserService {
                 user.getNickname(),
                 user.getEmail(),
                 user.getPhone(),
-                user.getStatus().name()
-        );
+                user.getStatus().name());
     }
 }

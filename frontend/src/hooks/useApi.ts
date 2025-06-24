@@ -58,8 +58,8 @@ export const useApi = () => {
       // 处理HTTP错误状态
       if (!response.ok) {
         if (response.status === 401) {
-          // Token过期或无效，自动登出
-          logout();
+          // Token过期或无效，但不自动登出
+          // 只抛出错误，让调用者处理
           throw new ApiError('认证已过期，请重新登录', 401);
         }
 

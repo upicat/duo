@@ -49,15 +49,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                .cors(cors -> cors.and())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationManager(authenticationManager())
                 .authorizeHttpRequests(authz -> authz
                         // 认证接口
-                        .requestMatchers("/auth/login", "/auth/register").permitAll()
+                        .requestMatchers("/auth/login", "/auth/validate").permitAll()
 
                         // 静态资源
-                        .requestMatchers("/", "/login", "/static/**", "/assets/**", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.jpg", "/*.jpeg", "/*.gif", "/*.svg").permitAll()
+                        .requestMatchers("/", "/login", "/static/**", "/assets/**", "/*.js", "/*.css", "/*.ico",
+                                "/*.png", "/*.jpg", "/*.jpeg", "/*.gif", "/*.svg")
+                        .permitAll()
 
                         // 测试接口（临时）
                         .requestMatchers("/test/**").permitAll()

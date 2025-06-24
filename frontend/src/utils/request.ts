@@ -17,8 +17,8 @@ const request: AxiosInstance = axios.create({
 // 请求拦截器
 request.interceptors.request.use(
   (config) => {
-    // 添加认证 token
-    const token = storage.get('token')
+    // 添加认证 token，使用auth_token键名，与useAuth.ts保持一致
+    const token = storage.get('auth_token') || localStorage.getItem('auth_token')
     if (token && config.headers) {
       config.headers['Authorization'] = `Bearer ${token}`
     }
@@ -76,11 +76,13 @@ request.interceptors.response.use(
 
     switch (status) {
       case 401:
-        // 未授权，清除本地存储并跳转到登录页
-        storage.remove('token')
+        // 未授权，清除本地存储，但不自动跳转
+        // 让auth provider处理重定向
+        storage.remove('auth_token')
+        localStorage.removeItem('auth_token')
         storage.remove('user')
         message.error('登录已过期，请重新登录')
-        window.location.href = '/login'
+        // 不再使用 window.location.href = '/login'
         break
       case 403:
         message.error('没有权限访问该资源')
